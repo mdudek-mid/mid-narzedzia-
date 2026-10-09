@@ -5,7 +5,7 @@ description: Odczyt modeli BIM w formacie IFC (.ifc, .ifcZIP; IFC2x3, IFC4, IFC4
 
 # Czytnik IFC (IfcOpenShell)
 
-Do IFC służy biblioteka IfcOpenShell, instalowana z PyPI w ok. 20 sekund. Skrypt pomocniczy `ifc_tool.py` leży w publicznym repozytorium Pracowni MiD `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `ifc/`. Procedura sprawdzona 2026-10-09 na modelach IFC2x3, IFC4 i IFC4.3: mosty, drogi, kolej, osie tras z klotoidami, cosinusoidami i przechyłką, georeferencja, zbrojenie, pliki .ifcZIP, polskie nazwy.
+Do IFC służy biblioteka IfcOpenShell, instalowana z PyPI: ok. 20 sekund w zwykłej sesji, do ok. 3 minut, gdy w środowisku nie ma jeszcze numpy i matplotlib. Instalację uruchom w tle i w tym czasie pobierz model (krok 3). Skrypt pomocniczy `ifc_tool.py` leży w publicznym repozytorium Pracowni MiD `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `ifc/`. Procedura sprawdzona 2026-10-09 na modelach IFC2x3, IFC4 i IFC4.3: mosty, drogi, kolej, osie tras z klotoidami, cosinusoidami i przechyłką, georeferencja, zbrojenie, pliki .ifcZIP, polskie nazwy.
 
 ## Krok 1 – instalacja (raz na sesję)
 
