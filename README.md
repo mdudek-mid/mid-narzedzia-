@@ -10,7 +10,7 @@ Zawartość:
 - `libredwg/libredwg-0.13.3-linux-x86_64.tar.xz` – programy `dwg2dxf`, `dwgread`, `dwg2SVG` (build statyczny, Linux x86_64, zależą tylko od libc) oraz skrypt `dwg_tool.py`.
 - `libredwg/libredwg-0.13.3-linux-x86_64.tar.xz.sha256` – suma kontrolna.
 
-Pobranie w sesji Claude (po dołączeniu repo `mdudek-mid/mid-narzedzia-` do sesji):
+Pobranie w sesji Claude (repo jest publiczne, nie trzeba go dołączać do sesji):
 
 ```bash
 rm -rf /tmp/mid-narzedzia

@@ -5,7 +5,7 @@ description: Odczyt rysunków AutoCAD .dwg i .dxf (warstwy, teksty, opisy, wymia
 
 # Czytnik DWG/DXF (LibreDWG + ezdxf)
 
-Środowisko robocze nie ma gotowego czytnika DWG i każda nowa sesja zaczyna od zera. Gotowe programy LibreDWG 0.13.3 leżą w prywatnym repozytorium użytkownika `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `libredwg/`. Instalacja z niego trwa kilka sekund. Gdy ta droga zawiedzie, budujemy ze źródeł (ok. 5 minut). Obie drogi sprawdzone 2026-10-09 na rysunkach R14, 2000, 2004, 2007, 2010, 2013 i 2018.
+Środowisko robocze nie ma gotowego czytnika DWG i każda nowa sesja zaczyna od zera. Gotowe programy LibreDWG 0.13.3 leżą w publicznym repozytorium Pracowni MiD `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `libredwg/`. Instalacja z niego trwa kilka sekund i działa w każdej sesji, także u współpracowników bez podłączonego GitHuba. Gdy ta droga zawiedzie, budujemy ze źródeł (ok. 5 minut). Obie drogi sprawdzone 2026-10-09 na rysunkach R14, 2000, 2004, 2007, 2010, 2013 i 2018.
 
 ## Krok 1 – instalacja (raz na sesję)
 
@@ -13,8 +13,7 @@ Najpierw sprawdź, czy już jest: `test -x ~/.local/libredwg/bin/dwg2dxf && echo
 
 ### 1a. Szybka droga: gotowe programy z GitHuba (kilka sekund)
 
-1. Dołącz repozytorium do sesji narzędziem `add_repo` z parametrami owner `mdudek-mid`, repo `mid-narzedzia-` (z myślnikiem na końcu), access `read`. Bez tego prywatne repo zwróci błąd. Nie sprawdzaj go wcześniej curlem ani `git ls-remote`. Jeśli `add_repo` go nie znajdzie, sprawdź nazwę narzędziem `list_repos` z zapytaniem `narzedzia` (repo mogło zostać przemianowane).
-2. Pobierz repozytorium i zainstaluj programy:
+Repozytorium jest publiczne, więc nie trzeba go dołączać do sesji. Pobierz je i zainstaluj programy:
 
 ```bash
 rm -rf /tmp/mid-narzedzia
@@ -27,7 +26,9 @@ export PATH=~/.local/libredwg/bin:$PATH && dwg2dxf --version   # oczekiwane: dwg
 
 Paczka zawiera `dwg2dxf`, `dwgread`, `dwg2SVG` oraz skrypt `~/.local/libredwg/dwg_tool.py`, identyczny z tym z kroku 2. Po udanej instalacji krok 2 pomiń.
 
-Jeśli którykolwiek krok zawiedzie (repo niedostępne, suma kontrolna się nie zgadza, program nie startuje), przejdź do drogi 1b.
+Jeśli `git clone` zwróci błąd dostępu, a w sesji jest narzędzie `add_repo`, dołącz nim repo (owner `mdudek-mid`, repo `mid-narzedzia-`, access `read`) i spróbuj raz jeszcze. Gdy repo nie istnieje pod tą nazwą, mogło zostać przemianowane: poszukaj go narzędziem `list_repos` z zapytaniem `narzedzia`.
+
+Jeśli mimo to którykolwiek krok zawiedzie (repo niedostępne, suma kontrolna się nie zgadza, program nie startuje), przejdź do drogi 1b.
 
 ### 1b. Zapas: budowa ze źródeł (ok. 5 minut)
 
