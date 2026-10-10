@@ -1,6 +1,6 @@
 ---
 name: ekspertyza-mostu
-description: Ekspertyzy techniczne obiektów mostowych Pracowni MiD – ocena elementów w skali GDDKiA 0–5 (ocena średnia i ogólna, tryby robót A/1/2/3), interpretacja badań (sklerometr, karbonatyzacja, chlorki, potencjały, rezystywność, ubytki zbrojenia), nośność użytkowa i MLC z MES, raport DOCX wg Instrukcji 02.
+description: Ekspertyzy mostów MiD: oceny GDDKiA 0–5 z trybami robót, interpretacja badań betonu i zbrojenia, nośność z MES i raport DOCX wg Instrukcji 02.
 ---
 
 # Ekspertyza mostu (MiD)

@@ -1,6 +1,6 @@
 ---
 name: opis-techniczny
-description: Opisy techniczne i części opisowe opracowań Pracowni MiD wg Instrukcji 02 (przedmiot, lokalizacja z mapami, cel i zakres, podstawa, wykorzystane materiały [DA][N][U][R][W][L][I][P]) – generowanie DOCX, aktualne cytaty aktów prawnych z API ELI Sejmu, działki z ULDK, sprawdzenie zgodności przed wydaniem (Zał. 4 ZEW poz. 14).
+description: Opisy techniczne MiD wg Instrukcji 02: DOCX z lokalizacją i mapami GUGiK, aktualne cytaty aktów z API ELI, wykaz działek, sprawdzenie opisu przed wydaniem.
 ---
 
 # Opis techniczny wg Instrukcji 02 (MiD)

@@ -1,6 +1,6 @@
 ---
 name: mes-eurokody
-description: Obliczenia MES przęseł mostowych w Pracowni MiD – belka ciągła i ruszt (grillage) z powierzchniami wpływu, obciążenia ruchome LM1/LM2 (PTB 2022), PN-85/S-10030, PN-66/B-02015, samochody modelowe GDDKiA 1/S42…5/S10, pojazdy MLC; nośność użytkowa (Zarz. 17 GDDKiA), klasa MLC, RF, nośność przekroju żelbetowego wg PN-EN 1992.
+description: MES przęseł mostowych MiD: ruszt i belka ciągła, LM1/LM2, PN-85, PN-66, samochody S GDDKiA i MLC; nośność użytkowa (Zarz. 17), klasa MLC, RF, M_Rd/V_Rd wg EC2.
 ---
 
 # MES i Eurokody dla mostów (MiD)
