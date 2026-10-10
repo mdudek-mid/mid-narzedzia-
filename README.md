@@ -1,6 +1,6 @@
 # mid-narzedzia
 
-Narzędzia pomocnicze dla Claude w Pracowni Projektowej MiD: czytniki rysunków DWG/DXF i modeli IFC, narzędzia przetargowe (analiza SWZ, referencje i kadra, kryteria oceny, wycena) oraz projektowe (opis techniczny wg Instrukcji 02, MES i nośność mostów, ekspertyzy). Repozytorium jest publiczne i zawiera tylko kod. Dane firmy (baza referencji i kadry, parametry i wzorce wycen) leżą w prywatnym repo `mid-przetargi`, w katalogu `baza_mid/`.
+Narzędzia pomocnicze dla Claude w Pracowni Projektowej MiD: czytniki rysunków DWG/DXF i modeli IFC, narzędzia przetargowe (analiza SWZ, referencje i kadra, kryteria oceny, wycena, przegląd umowy) oraz projektowe (opis techniczny wg Instrukcji 02, MES i nośność mostów, ekspertyzy). Repozytorium jest publiczne i zawiera tylko kod. Dane firmy (baza referencji i kadry, parametry i wzorce wycen) leżą w prywatnym repo `mid-przetargi`, w katalogu `baza_mid/`.
 
 ## Czytnik DWG (LibreDWG 0.13.3)
 
@@ -115,4 +115,13 @@ Skrypt `ekspertyza/ekspertyza_tool.py` obsługuje ekspertyzę od ocen do dokumen
 - raport DOCX wg Instrukcji 02 (przez `opis_tool.py`) z wynikami nośności z `mes_tool.py`.
 
 Korzysta z niego skill „ekspertyza-mostu” (`skill/ekspertyza-mostu/SKILL.md`).
+
+## Przegląd umowy (umowa_tool.py)
+
+Skrypt `umowa/umowa_tool.py` dzieli umowę (DOCX/PDF, także kilka plików kontraktu FIDIC) na klauzule z lokalizacją i stroną i przechodzi listę kontrolną z perspektywy biura projektowego:
+- kary (stawki, podstawa, zwłoka/opóźnienie), limit kar, odszkodowanie i ograniczenie odpowiedzialności;
+- płatności i odbiór, płatności częściowe, waloryzacja, zabezpieczenie;
+- prawa autorskie, AI, nadzór autorski, terminy zamawiającego, przewlekłość organów, odstąpienie, ograniczenie zakresu.
+
+Liczy ekspozycję na kary, generuje pytania do zamawiającego albo tabelę propozycji do negocjacji, wstawia komentarze Worda przy klauzulach (python-docx ≥ 1.2) i dla P&B wypisuje kary do przeniesienia do umowy z GW. Korzysta z niego skill „przeglad-umowy” (`skill/przeglad-umowy/SKILL.md`).
 
