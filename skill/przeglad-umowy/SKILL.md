@@ -1,6 +1,6 @@
 ---
 name: przeglad-umowy
-description: Przegląd umów MiD (wzór umowy w przetargu, umowa do podpisu, kontrakt P&B z GW): kary i ekspozycja, limity, odpowiedzialność, płatności, waloryzacja, prawa autorskie; pytania do SWZ, komentarze w DOCX, flow-down.
+description: Przegląd umów MiD (przetarg, umowa do podpisu, kontrakt P&B): kary i ekspozycja, odpowiedzialność, płatności, waloryzacja, prawa autorskie; pytania do SWZ, komentarze w DOCX.
 ---
 
 # Przegląd umowy (MiD)
