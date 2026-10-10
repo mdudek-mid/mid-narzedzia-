@@ -887,8 +887,9 @@ def cmd_wzor(a):
              "nosnosc": {"obciazenie_normowe": "PN85_A", "gamma_normowe": 1.5, "gamma_uzytkowe": 1.5}}
     else:
         m = {"nazwa": "Ruszt – przęsła swobodnie podparte z belek prefabrykowanych", "przesla": [8.6, 11.7, 8.6], "ciagla": False, "dx": 0.25,
-             "dzwigary": {"liczba": 22, "rozstaw": 0.5, "y0": 0.25, "EI": [1.0, 1.0, 1.0], "GJ": 0.0},
-             "poprzeczne": {"typ": "przegub", "EI_m": 0.05, "GJ_m": 0.0, "_uwaga": "sztywność płyty w kierunku poprzecznym na 1 m (względna do EI dźwigara)"},
+             "dzwigary": {"liczba": 22, "rozstaw": 0.5, "y0": 0.25, "EI": [1.0, 1.0, 1.0], "GJ": 0.5,
+                          "_uwaga": "sztywności względne; GJ/EI z przekroju belki (z redukcją na zarysowanie) – policz warianty 0,5 / 1,0 / sztywne"},
+             "poprzeczne": {"typ": "przegub", "EI_m": 2.0, "GJ_m": 0.0, "_uwaga": "EI_m: sztywność poprzeczna belki na 1 m względem EI dźwigara (h^3/12 na 1 m / I belki)"},
              "szerokosc": 11.0, "jezdnia": [2.20, 9.25], "kraweznik": True, "chodniki": [[0.0, 2.20], [9.25, 11.0]],
              "stale": [{"nazwa": "dźwigary", "typ": "dzwigar", "q": [4.60, 5.27, 4.60], "gamma": [1.2, 0.9]},
                        {"nazwa": "nawierzchnia", "typ": "pow", "q": 2.30, "y": [2.20, 9.25], "gamma": [1.5, 0.9]}],

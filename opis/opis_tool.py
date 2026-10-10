@@ -130,7 +130,10 @@ def eli_rozwiaz(eli, offline=False):
         b = _refs(d, "Tekst jednolity dla aktu")
         if b:
             baza = b[0]
-            d = eli_get(baza, offline) or d
+            d2 = eli_get(baza, offline)
+            if not d2 or d2.get("_blad"):
+                return {"eli": eli, "blad": (d2 or {}).get("_blad", "brak danych aktu bazowego (offline)")}
+            d = d2
     wynik.update(baza=baza, adres=d.get("displayAddress") or _adres(baza),
                  tytul=re.sub(r"\.$", "", (d.get("title") or "")).replace(" - ", " – "),
                  typ=d.get("type"), status=d.get("status"), w_mocy=d.get("inForce") == "IN_FORCE",
