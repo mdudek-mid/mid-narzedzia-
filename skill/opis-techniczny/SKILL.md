@@ -57,7 +57,7 @@ Nie przepisuj adresów Dz.U. ze starych opracowań. Typowe błędy: stary t.j. P
 ```bash
 python3 -I $O generuj opis.json --out Opis_techniczny.docx --md Opis_techniczny.md
 ```
-Strona tytułowa z metryką i zespołem, punkty 1–4, rozdziały merytoryczne z `rozdzialy`, wykaz materiałów. Narzędzie wypisze nierozwiązane odwołania `[@…]`. Przejrzyj render: `soffice --headless --convert-to pdf` → `pdftoppm -r 60 -png`.
+Strona tytułowa z metryką i zespołem, punkty 1–4, rozdziały merytoryczne z `rozdzialy` (treść, `tabele`, `rysunki`, `podrozdzialy`), wykaz materiałów. Narzędzie wypisze nierozwiązane odwołania `[@…]`. Przejrzyj render: `soffice --headless --convert-to pdf` → `pdftoppm -r 60 -png`.
 
 **5. Sprawdzenie przed wydaniem** (także dokumentów cudzych i archiwalnych):
 ```bash
