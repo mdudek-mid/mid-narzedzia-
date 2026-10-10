@@ -125,3 +125,12 @@ Skrypt `umowa/umowa_tool.py` dzieli umowę (DOCX/PDF, także kilka plików kontr
 
 Liczy ekspozycję na kary, generuje pytania do zamawiającego albo tabelę propozycji do negocjacji, wstawia komentarze Worda przy klauzulach (python-docx ≥ 1.2) i dla P&B wypisuje kary do przeniesienia do umowy z GW. Korzysta z niego skill „przeglad-umowy” (`skill/przeglad-umowy/SKILL.md`).
 
+
+## Protokoły (protokoly_tool.py)
+
+Skrypt `protokoly/protokoly_tool.py` przygotowuje protokoły z realizacji umowy:
+- rzeczowo-finansowe: wczytuje harmonogram z umowy (XLSX, PDF, DOCX, CSV, tekst), prowadzi historię protokołów w JSON, kontroluje zaawansowanie narastająco i tworzy XLSX w układzie wzoru GW z formułami oraz kwotą do faktury;
+- przekazania dokumentacji: DOCX z wykazem pozycji i plików z sumami SHA-256 (manifest CSV);
+- narady, rady techniczne i pobyty nadzoru autorskiego: DOCX z ustaleniami, decyzjami i zadaniami, kontrolą odstąpień (art. 36a i 36b PB), porządkowaniem transkryptu Teams (VTT/DOCX) i zbiorczą listą zadań.
+
+Korzysta z niego skill „protokoly” (`skill/protokoly/SKILL.md`).
