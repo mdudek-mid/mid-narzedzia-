@@ -1,6 +1,6 @@
 # mid-narzedzia
 
-Narzędzia pomocnicze dla Claude w Pracowni Projektowej MiD: czytniki rysunków DWG/DXF i modeli IFC oraz narzędzia przetargowe (analiza SWZ, referencje i kadra, kryteria oceny, wycena). Repozytorium jest publiczne i zawiera tylko kod. Dane firmy (baza referencji i kadry, parametry i wzorce wycen) leżą w prywatnym repo `mid-przetargi`, w katalogu `baza_mid/`.
+Narzędzia pomocnicze dla Claude w Pracowni Projektowej MiD: czytniki rysunków DWG/DXF i modeli IFC, narzędzia przetargowe (analiza SWZ, referencje i kadra, kryteria oceny, wycena) oraz projektowe (opis techniczny wg Instrukcji 02, MES i nośność mostów, ekspertyzy). Repozytorium jest publiczne i zawiera tylko kod. Dane firmy (baza referencji i kadry, parametry i wzorce wycen) leżą w prywatnym repo `mid-przetargi`, w katalogu `baza_mid/`.
 
 ## Czytnik DWG (LibreDWG 0.13.3)
 
@@ -86,3 +86,33 @@ Rozbiera informację z otwarcia ofert, wyszukuje w SWZ opis kryteriów i dokumen
 ## Wycena oferty (wycena_tool.py)
 
 Skrypt `wycena/wycena_tool.py` liczy kalkulację prac projektowych ze specyfikacji JSON: pracę własną w rbg lub jnp, koszty zewnętrzne z narzutem na podwykonawców, rezerwę. Robi scenariusze A/B/C i rozkłada cel cenowy z zachowaniem pozycji sztywnych. Rozbija cenę na formularz zamawiającego: ryczałty, ilości, pozycje procentowe (np. kwota tymczasowa), stałe udziały i opcje. Sprawdza formalności i tworzy XLSX (formularz + kalkulacja z formułami) oraz opis MD w stylu MiD. Parametry metody wczytuje z prywatnego `baza_mid/parametry_wyceny.json`. Korzysta z niego skill „wycena-oferty” (`skill/wycena-oferty/SKILL.md`). Wymaga `openpyxl`.
+
+## Opis techniczny wg Instrukcji 02 (opis_tool.py)
+
+Skrypt `opis/opis_tool.py` składa część opisową opracowań MiD ze specyfikacji JSON w układzie Instrukcji 02: przedmiot, lokalizacja, cel i zakres, podstawa, wykorzystane materiały [DA][N][U][R][W][L][I][P]. Robi następujące rzeczy:
+- lokalizacja z usług GUGiK: jednostki administracyjne i działka z ULDK, mapa Polski (PRG), mapa topograficzna, ortofotomapa z działkami (KIEG);
+- aktualne cytaty aktów prawnych z API ELI Sejmu: tekst jednolity, „z późn. zm.”, uchylenia i akty zastępujące;
+- generowanie DOCX i MD z tabelami, rysunkami i odwołaniami `[@klucz]` → [U1], [N2];
+- sprawdzenie gotowego opisu (DOCX/PDF/MD/TXT) przed wydaniem (Zał. 4 ZEW poz. 14).
+
+Korzysta z niego skill „opis-techniczny” (`skill/opis-techniczny/SKILL.md`). Wymaga `python-docx`, `pyproj`, `pillow`.
+
+## MES i nośność mostów (mes_tool.py)
+
+Skrypt `mes/mes_tool.py` to solver MES dla przęseł mostowych: belka ciągła albo ruszt (dźwigary + elementy poprzeczne sztywne lub przegubowe), powierzchnie wpływu metodą sprzężoną. Liczy obciążenia ruchome:
+- LM1/LM2 z współczynnikami PTB 2022;
+- PN-85/S-10030 klasy A–E, PN-66/B-02015 klasa I;
+- samochody modelowe GDDKiA 1/S42…5/S10;
+- pojazdy MLC kołowe i gąsienicowe (PTB 2022 zał. 2).
+
+Wyznacza nośność użytkową wg Zarz. 17 GDDKiA (kategoria, m_u, znak B-18), klasę MLC, RF oraz M_Rd i V_Rd,c przekroju żelbetowego (PN-EN 1992). Testy (`test`) porównują wyniki ze wzorami zamkniętymi. Belkę ciągłą sprawdzono też z PyNite. Korzysta z niego skill „mes-eurokody” (`skill/mes-eurokody/SKILL.md`). Wymaga `numpy`, `scipy`, `matplotlib`.
+
+## Ekspertyza mostu (ekspertyza_tool.py)
+
+Skrypt `ekspertyza/ekspertyza_tool.py` obsługuje ekspertyzę od ocen do dokumentu:
+- oceny elementów w skali GDDKiA 0–5, ocena średnia i ogólna obiektu, tryby robót A/1/2/3, kontrola spójności ocen i zaleceń;
+- interpretacja badań: sklerometr (PN-EN 13791), klasa betonu, karbonatyzacja z prognozą, chlorki, potencjały, rezystywność, ubytki zbrojenia;
+- raport DOCX wg Instrukcji 02 (przez `opis_tool.py`) z wynikami nośności z `mes_tool.py`.
+
+Korzysta z niego skill „ekspertyza-mostu” (`skill/ekspertyza-mostu/SKILL.md`).
+
