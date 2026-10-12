@@ -87,7 +87,7 @@ Teksty PB sprawdzone w ELI: Dz.U. 2026 poz. 524 (art. 20, 36a, 36b, 10.2026). Cy
 
 ## Test na danych MiD
 
-Harmonogram RF umowy projektowej P&B (obwodnica, 19 pozycji, załącznik z OneDrive) wczytany z XLSX, CSV, DOCX, tekstu i PDF z zawiniętymi nazwami. Wszędzie wyszła ta sama lista pozycji i suma zgodna z załącznikiem. Trzy protokoły testowe (w tym nadzór „+1/12”) zgadzają się z przeliczeniem formuł w LibreOffice. Protokół przekazania z manifestem 5 plików zweryfikowano ponownym liczeniem SHA-256. Notatki z rady i nadzoru zrobiono na fikcyjnym przykładzie, oznaczonym w treści, bo w OneDrive nie ma protokołów narad MiD.
+Harmonogram RF umowy projektowej P&B (obwodnica, 19 pozycji, załącznik z OneDrive) wczytany z XLSX, CSV, DOCX, tekstu i PDF z zawiniętymi nazwami. Wszędzie wyszła ta sama lista pozycji i suma zgodna z załącznikiem. Trzy protokoły testowe (w tym nadzór „+1/12”) zgadzają się z przeliczeniem formuł w LibreOffice. Protokół przekazania z manifestem 5 plików zweryfikowano ponownym liczeniem SHA-256. Notatki z rady i nadzoru zrobiono na fikcyjnym przykładzie, oznaczonym w treści: protokoły narad MiD leżą na serwerze biura, do którego połączenie z komputerem nie sięga.
 
 ## Odpowiedź (krótko)
 
