@@ -728,6 +728,8 @@ def cmd_wzor_notatka(a):
                      "inspektor_nadzoru": "", "wpis_dziennik": "[nr wpisu w dzienniku budowy / brak]",
                      "zgodnosc_z_projektem": "[stwierdzenia w zakresie zgodności realizacji z projektem]",
                      "decyzja": "[pozwolenie na budowę / ZRID – nr i data]",
+                     "wystapienia": [{"typ": "KNA", "nr": 1, "branza": "M", "data_wplywu": "RRRR-MM-DD",
+                                      "opis": "[czego dotyczy, np. zbrojenie fundamentu P3]", "odpowiedz": "[stanowisko projektanta]"}],
                      "odstapienia": [{"opis": "[odstąpienie / rozwiązanie zamienne zgłoszone przez kierownika budowy lub inspektora]",
                                       "projekt": "PB", "kwalifikacja": "nieistotne",
                                       "uzasadnienie": "[art. 36a ust. 5 – nie dotyczy żadnej z przesłanek pkt 1–7]",
@@ -770,6 +772,9 @@ def kontrola_notatki(sp, na_dzien=None):
                     uw.append(f"zmiana powierzchni zabudowy {pz}% > 5% – przesłanka istotności (art. 36a ust. 5 pkt 2 lit. a PB): {op}")
             if o.get("kwalifikacja") == "istotne":
                 uw.append(f"istotne odstąpienie – dopuszczalne dopiero po decyzji o zmianie pozwolenia na budowę (art. 36a ust. 1 PB): {op}")
+        for w in sp.get("wystapienia", []):
+            if not w.get("odpowiedz") or str(w.get("odpowiedz")).startswith("["):
+                uw.append(f"wystąpienie {w.get('typ', '')} {w.get('nr', '')} bez stanowiska projektanta: {str(w.get('opis', ''))[:60]}")
         if re.search(r"zrid", str(sp.get("decyzja", "")), re.I):
             uw.append("inwestycja na decyzji ZRID – tryb zmiany decyzji wg specustawy drogowej; kwalifikację odstąpień uzgodnij z inwestorem i organem")
     if not sp.get("uczestnicy"):
@@ -798,6 +803,12 @@ def cmd_notatka(a):
         naglowek(d, "Porządek spotkania")
         for i, p in enumerate(sp["porzadek"], 1):
             d.add_paragraph(f"{i}. {p}")
+    if typ == "nadzor" and sp.get("wystapienia"):
+        naglowek(d, "Rozpatrzone wystąpienia (karty NA, zapytania, wnioski materiałowe)")
+        tabela(d, [["Lp.", "Rodzaj i nr", "Branża", "Data wpływu", "Czego dotyczy", "Stanowisko projektanta"]] +
+               [[i, f"{w.get('typ', '')} {int(w['nr']):03d}" if str(w.get("nr", "")).isdigit() else f"{w.get('typ', '')} {w.get('nr', '')}",
+                 w.get("branza", ""), w.get("data_wplywu", ""), w.get("opis", ""), w.get("odpowiedz", "")]
+                for i, w in enumerate(sp["wystapienia"], 1)], szer=[0.9, 2.2, 1.4, 2.2, 4.8, 5.5], rozm=8.5)
     if typ == "nadzor":
         naglowek(d, "Zgodność realizacji z projektem (art. 20 ust. 1 pkt 4 lit. a PB)")
         d.add_paragraph(sp.get("zgodnosc_z_projektem", ""))
@@ -844,6 +855,11 @@ def cmd_notatka(a):
         podpisy(d, "Sporządził:", "Zatwierdził:", n=1)
     d.save(a.out)
     print(f"Zapisano {a.out}")
+    for w in sp.get("wystapienia", []) if typ == "nadzor" else []:
+        if str(w.get("nr", "")).isdigit() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(w.get("data_wplywu", ""))):
+            opis = re.sub(r"[^A-Za-z0-9-]", "", re.sub(r"\s+", "-", str(w.get("opis", "")).translate(
+                str.maketrans("ąćęłńóśźżĄĆĘŁŃÓŚŹŻ", "acelnoszzACELNOSZZ"))))[:40].strip("-")
+            print(f"  folder wystąpienia: {w['data_wplywu'].replace('-', '')}_{w.get('typ', '').upper()}_{int(w['nr']):03d}_{w.get('branza', '').upper()}_{opis}")
     uw = kontrola_notatki(sp)
     if uw:
         print("Kontrola:\n - " + "\n - ".join(uw))

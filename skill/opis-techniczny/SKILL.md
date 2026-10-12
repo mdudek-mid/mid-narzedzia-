@@ -62,6 +62,8 @@ Strona tytułowa z metryką i zespołem, punkty 1–4, rozdziały merytoryczne z
 **5. Sprawdzenie przed wydaniem** (także dokumentów cudzych i archiwalnych):
 ```bash
 python3 -I $O sprawdz Opis_techniczny.docx --out raport_I02.md     # .docx / .pdf / .md / .txt
+# sprawdza też: podstawę formalną (numer, data, strony umowy), pytania w celu ekspertyzy,
+# wzmiankę o obszarach wpływających na zadanie (ochrona przyrody, ujęcia wód, tereny górnicze, lasy, powódź) – ℹ informacyjnie
 ```
 Sprawdza: obecność, kolejność i położenie punktów 1–4, wykaz materiałów na końcu, elementy lokalizacji, kategorię celu, podstawę formalną i merytoryczną, odwołania [X#] bez pozycji w wykazie i pozycje bez odwołań, aktualność aktów (uchylone, stary t.j., numer innego aktu, stary zapis „Dz. U. Nr 63 poz. 735”), normy wycofane, powtórzone zdania, niewypełnione pola (`[DO UZUPEŁNIENIA…]`, `[NR…]`, `[ ]`). Wynik ✗/⚠ oznacza poz. 14 listy kontrolnej „do poprawy”.
 

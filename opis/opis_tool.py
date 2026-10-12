@@ -858,10 +858,28 @@ def cmd_sprawdz(a):
     else:
         kat = None
     wynik("✓" if kat else "⚠", "Cel opracowania określony (kategoria wg Instrukcji 02)", kat or "nie rozpoznano celu: decyzja/uzgodnienie albo ocena ekspercka")
+    if kat and kat.startswith("eksperckie"):
+        pyt = re.search(r"pytani|odpowiedz\w* na|okresleni\w* (stanu|nosnosci|przyczyn|mozliwosci)|ustaleni\w* (stanu|przyczyn|mozliwosci)|czy (obiekt|konstrukcj|most)", t_n)
+        wynik("✓" if pyt else "⚠", "Cel ekspertyzy: konkretne pytania z OPZ/umowy",
+              "" if pyt else "Instrukcja 02: cel opracowania eksperckiego ma odpowiadać wymaganiom OPZ/umowy, tj. wskazywać pytania, na które opracowanie odpowiada")
+    # obszary wplywajace na zadanie (Instrukcja 02, p. Lokalizacja) - tylko informacja
+    obsz = [w for w, rx in (("ochrona przyrody (Natura 2000, parki, rezerwaty)", r"natura 2000|obszar\w* chronion|rezerwat|park\w* (narodow|krajobraz)"),
+                            ("ujęcia wód / strefy ochronne", r"uje\w* wod|stref\w* ochron"), ("tereny górnicze", r"teren\w* gornicz"),
+                            ("Lasy Państwowe", r"lasy panstwowe|grunt\w* lesn"), ("zagrożenie powodziowe", r"zagrozeni\w* powodz|obszar\w* szczegolnego zagrozenia"))
+            if re.search(rx, t_n)]
+    wynik("✓" if obsz else "ℹ", "Lokalizacja: obszary wpływające na zadanie",
+          ("wymieniono: " + ", ".join(obsz)) if obsz else "brak wzmianki o obszarach chronionych, ujęciach wód, terenach górniczych, lasach, zagrożeniu powodziowym – sprawdź, czy dotyczą zadania")
     # 4. podstawa formalna i merytoryczna
     formalna = re.search(r"umow\w*(\s+o\s+\w+)?(\s+\w+)?\s+(nr|numer)|zleceni\w*\s+(nr|z dnia)", t_n)
     wynik("✓" if formalna else "✗", "Podstawa formalna (umowa / zlecenie z numerem i datą)",
           "" if formalna else "nie znaleziono „umowa nr …” ani „zlecenie …”")
+    if formalna:
+        okno = t_n[formalna.start():formalna.start() + 400]
+        data_ = re.search(r"z dnia|\d{1,2}[./]\d{1,2}[./]\d{4}|\d{4}-\d{2}-\d{2}|\d{1,2} \w+ \d{4}", okno)
+        strony = re.search(r"pomiedzy|zawart\w*|zamawiaj|wykonawc|zleceniodawc|inwestor", okno)
+        brak_ = [x for x, ok in (("data podpisania", data_), ("strony umowy", strony)) if not ok]
+        wynik("✓" if not brak_ else "⚠", "Podstawa formalna: numer, data i strony (Instrukcja 02)",
+              ("brak przy umowie: " + ", ".join(brak_)) if brak_ else "")
     meryt = re.search(r"podstaw\w* merytoryczn|material\w* wyjsciow|\[DA\d+\]", t_n, re.I)
     wynik("✓" if meryt else "⚠", "Podstawa merytoryczna (materiały wyjściowe)")
     # 5. odwolania [X#]

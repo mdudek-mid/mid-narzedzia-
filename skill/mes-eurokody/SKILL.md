@@ -55,7 +55,7 @@ python3 -I $M przekroj --b 490 --h 560 --d 510 --As 2400 --fck 35 --fyk 410 [--b
 | `S42 S32 S24 S16 S10` | samochody modelowe Zarz. 17/2004 + q 5/4/4/3/2 kN/m; ≤ 2 pasma (oś 1,5 m od krawężnika i 3/4 szerokości jezdni), koła co 1,75 m |
 | `MLC<kl><K/G><1/2>` | pojazdy kołowe (K) i gąsienicowe (G) PTB 2022 zał. 2, 1 albo 2 kolumny, γQ = 1,35, z nadwyżką dynamiczną |
 
-Do sprawdzenia z tekstem norm (oznaczone w raporcie): współczynnik dynamiczny PN-66 (domyślnie 1 + 10/(20 + 3L), jak w ekspertyzie MiD 2021 dla DW 226), obciążenie chodników PN-85 (domyślnie 2,5 kPa) i γ obliczeniowe obciążeń normowych do porównania z MLC (PN-85/PN-66: 1,5).
+Sprawdzone w źródłach (10.2026): φ wg PN-85 = 1,35 − 0,005L, tabelarycznie 1,30 przy 10 m i 1,00 przy 70 m (S. Karaś, Drogownictwo 12/2011); γ = 1,50 dla obciążeń ruchomych w systemie PN-S wobec 1,35 w Eurokodach (Wytyczne projektowania obciążeń drogowych obiektów mostowych wg Eurokodów, MIiB 2016). Nadal do sprawdzenia z tekstem norm (oznaczone w raporcie): współczynnik dynamiczny PN-66 (domyślnie 1 + 10/(20 + 3L), jak w ekspertyzie MiD 2021 dla DW 226), obciążenie chodników PN-85 (pkt 6.7.2 normy; domyślnie 2,5 kPa) i γ dla PN-66 (domyślnie 1,5).
 
 ## Nośność użytkowa – procedura (Zarz. nr 17 GDDKiA z 1.06.2004)
 

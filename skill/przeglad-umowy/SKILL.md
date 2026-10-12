@@ -32,7 +32,8 @@ python3 -I $U analiza SWK.docx DaneKontraktowe.docx AktUmowy.docx --rola podwyko
 ```
 - `--rola wykonawca` (MiD podpisuje z zamawiającym), `podwykonawca` (MiD jako projektant u GW; analizujesz kontrakt główny i dostajesz tabelę kar do przeniesienia do umowy MiD–GW), `zlecajacy` (MiD zleca podwykonawcy). Oceny są pisane z perspektywy wykonawcy. W trybie `zlecajacy` użyj ich odwrotnie: sprawdź, czy umowa z podwykonawcą przenosi kary, terminy, prawa autorskie i OC z umowy głównej (porównaj obie analizy).
 - Zamawiający publiczny jest rozpoznawany po odwołaniach do Pzp (`--zamawiajacy` wymusza). Okres umowy jest liczony z terminu (`--miesiace` wymusza), bo od niego zależą art. 439 i 443.
-- `--wynagrodzenie` (netto, z wyceny) przelicza ekspozycję na złote.
+- `--wynagrodzenie` (netto, z wyceny) przelicza ekspozycję na złote i zamienia kary kwotowe (zł za dzień, zł za przypadek – typowe w umowach z GW przepisujących kary z kontraktu) na % wynagrodzenia MiD, żeby je ocenić. Bez niego kara kwotowa za dzień dostaje 🟠 „podaj --wynagrodzenie”.
+- Kara warunkowa („w przypadku naliczenia kar przez Zamawiającego”, back-to-back) jest rozpoznawana i oceniana łagodniej – sprawdź, czy wysokość nie przekracza kary z kontraktu głównego. Podstawa brutto jest zaznaczana.
 
 Lista kontrolna:
 - kary: stawka, podstawa (całość czy część), zwłoka czy opóźnienie, otwarty katalog, kary za odstąpienie i zmianę osoby;
@@ -70,6 +71,8 @@ Pokazuje % i zł dla kolejnych dni zwłoki, z limitem łącznym, liczbę dni do 
 ## Progi i zasady MiD
 
 Domyślne progi narzędzia są ostrożnościowe: kara dzienna ≥ 0,2% (🟠), ≥ 0,5% (🔴), limit kar > 20% (🟠), > 30% (🔴), zabezpieczenie > 5%, odbiór > 30 dni. **Nie są to ustalenia Marcina.** Szablon do kalibracji: `python3 -I $U standardy --out standardy_umow.json`. Po potwierdzeniu przez Marcina plik trzymaj prywatnie (`mid-przetargi/baza_mid/standardy_umow.json`) i podawaj `--standardy`. Pole `zasady` (np. „nie podpisujemy bez limitu odpowiedzialności”) trafia do raportu.
+
+W prywatnej bazie jest **propozycja** standardów zbudowana z historii negocjacji MiD z generalnymi wykonawcami (`baza_mid/standardy_umow_PROPOZYCJA.json`, uzasadnienie w `baza_mid/zrodla/Standardy_umow_MiD_uzasadnienie.md`): progi, kilkanaście zasad z dowodami (umowa, wersja, klauzula) i lista spraw do rozstrzygnięcia. Do czasu decyzji Marcina używaj jej jako punktu odniesienia („w umowie X MiD uzyskał…”), a nie jako przyjętych progów. Treść umów i wynegocjowane warunki to dane firmy – nie trafiają do publicznego repo.
 
 ## Ściąga prawna (teksty jednolite sprawdzone w ELI, 10.2026)
 

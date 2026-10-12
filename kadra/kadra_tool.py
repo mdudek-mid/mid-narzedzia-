@@ -46,11 +46,14 @@ def dpl(s):
     return f"{m.group(3)}.{m.group(2)}.{m.group(1)}" if m else s
 
 
-def wczytaj(baza):
+def wczytaj(baza, archiwalne=False):
+    """rekordy archiwalne (duplikaty, nieaktualne) pomijane, chyba że archiwalne=True"""
     b = Path(baza)
     r = json.load(open(b / "referencje.json", encoding="utf-8"))
     k = json.load(open(b / "kadra.json", encoding="utf-8"))
-    return r["referencje"], k["osoby"]
+    R = [x for x in r["referencje"] if archiwalne or not x.get("archiwalna")]
+    K = [x for x in k["osoby"] if archiwalne or not x.get("archiwalna")]
+    return R, K
 
 
 def lata_wstecz(od: date, lat: float) -> date:
@@ -120,6 +123,10 @@ def ocen_usluge(r, a, od):
     p = r.get("podmiot") or ""
     if "JDG" in p:
         oc.append(("podmiot", "!" if not a.tylko_spolka else "✗", "doświadczenie JDG Marcin Dudek - w ofercie spółki tylko jako udostępnienie zasobów (art. 118 Pzp)"))
+    elif p and "MiD" not in p and "Dudek" not in p:
+        oc.append(("podmiot", "✗", f"usługa innego podmiotu ({p[:60]}) - tylko jako doświadczenie osób, nie usługa MiD"))
+    elif "imienna" in p or (not p and r.get("rola_mid") == "projektant"):
+        oc.append(("podmiot", "!", "referencja imienna (bez nazwy firmy) - do wykazu osób; jako usługa firmy tylko po potwierdzeniu podmiotu"))
     return oc
 
 
@@ -274,7 +281,9 @@ def cmd_pokaz(a):
 
 
 def cmd_stan(a):
+    Rw, _ = wczytaj(a.baza, archiwalne=True)
     R, K = wczytaj(a.baza)
+    print(f"Archiwalne / duplikaty (pomijane): {len(Rw) - len(R)}")
     od = date.today()
     print(f"Referencje: {len(R)}; z wartością brutto {sum(1 for r in R if r.get('wartosc_brutto_pln'))}; "
           f"z datą {sum(1 for r in R if r.get('data_zakonczenia'))}; do weryfikacji {sum(1 for r in R if r.get('do_weryfikacji'))}")
@@ -289,14 +298,19 @@ def cmd_stan(a):
         if r.get("pewnosc") != "niska" and (r.get("data_zakonczenia") or "9999") >= g and not (r.get("wartosc_brutto_pln") and r.get("data_zakonczenia")):
             print(f"  {r['id']} {r.get('etykieta','')}: brak {'wartości ' if not r.get('wartosc_brutto_pln') else ''}{'daty' if not r.get('data_zakonczenia') else ''}")
     nis = [r for r in R if r.get("pewnosc") == "niska"]
-    print(f"  + {len(nis)} referencji znanych tylko z nazwy pliku (skany bez tekstu) - do odczytu OCR, gdy komputer z OneDrive jest połączony")
+    if nis:
+        print(f"  + {len(nis)} referencji znanych tylko z nazwy pliku (skany bez tekstu) - do odczytu OCR, gdy komputer z OneDrive jest połączony")
+    sr = [r for r in R if r.get("pewnosc") == "srednia"]
+    print(f"Pewność średnia: {len(sr)} ({', '.join(r['id'] for r in sr)})")
+    obce = [r for r in R if (r.get("podmiot") or "") and "MiD" not in r["podmiot"] and "Dudek" not in r["podmiot"]]
+    if obce:
+        print(f"Usługi innych podmiotów (tylko doświadczenie osób): {', '.join(r['id'] for r in obce)}")
 
 
 # ----------------------------------------------------------------- wykazy i formularze
 def wiersz_uslugi(r):
     nazwa = r.get("nazwa") or DUZO
     obj = opis_obiektow(r)
-    zak = ", ".join(r.get("zakres") or [])
     przedmiot = nazwa + (f" (obiekty: {obj})" if obj else "")
     zam = (r.get("zamawiajacy_nazwa") or DUZO) + (f", {r['zamawiajacy_adres']}" if r.get("zamawiajacy_adres") else "")
     if r.get("inwestor_koncowy"):

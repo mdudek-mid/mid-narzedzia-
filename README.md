@@ -134,3 +134,7 @@ Skrypt `protokoly/protokoly_tool.py` przygotowuje protokoły z realizacji umowy:
 - narady, rady techniczne i pobyty nadzoru autorskiego: DOCX z ustaleniami, decyzjami i zadaniami, kontrolą odstąpień (art. 36a i 36b PB), porządkowaniem transkryptu Teams (VTT/DOCX) i zbiorczą listą zadań.
 
 Korzysta z niego skill „protokoly” (`skill/protokoly/SKILL.md`).
+
+## Standardy biura (standardy_tool.py)
+
+Skrypt `standardy/standardy_tool.py` podpowiada nazwy plików i folderów zgodne ze standardem biura (prefiks daty, bez polskich znaków, spacji, `#` i `!`), nazwy folderów wystąpień w nadzorze autorskim, skróty instytucji i folder docelowy dla rodzaju dokumentu, a `sprawdz` raportuje niezgodne nazwy, puste foldery i za długie ścieżki (niczego nie zmienia). Reguły biura czyta z prywatnego pliku konfiguracji (`--standardy` albo `MID_STANDARDY`); sam skrypt nie zawiera treści instrukcji wewnętrznych.

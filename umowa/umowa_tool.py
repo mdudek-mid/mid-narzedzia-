@@ -100,6 +100,8 @@ def stopki(strony):
         widziane = set()
         for l in s.splitlines():
             k = re.sub(r"\d+", "#", l.strip())
+            if RX_PAR.match(l.strip()) or re.match(r"^(art\.|artyku|rozdzia|klauzul|subklauzul)", k, re.I):
+                continue                       # naglowki jednostek redakcyjnych to nie stopki
             if 3 <= len(k) <= 160 and k not in widziane:
                 widziane.add(k)
                 c[k] += 1
@@ -315,6 +317,14 @@ class Analiza:
             bz = k["baza"] if len(k["baza"]) <= 90 else k["baza"][:90].rsplit(" ", 1)[0] + "…"
             opis = f"{fmt(k['stawka_proc'], 2).rstrip('0').rstrip(',')}% {bz}" if k["stawka_proc"] is not None else f"{fmt(k['kwota'], 2)} zł"
             opis += f" / {k['jednostka']}"
+            W = getattr(self.a, "wynagrodzenie", None)
+            if k["stawka_proc"] is None and k["kwota"] and W:
+                k["stawka_proc"] = round(100 * k["kwota"] / W, 4)
+                k["z_kwoty"] = True
+                opis += f" (≈ {fmt(k['stawka_proc'], 3).rstrip('0').rstrip(',')}% wynagrodzenia {fmt(W, 0)} zł netto)"
+            ctx_w = k["_p"] + " " + self.N[k["i"]]
+            k["warunkowa"] = bool(re.search(r"(w przypadku|o ile|jezeli|gdy|jesli)\W.{0,120}(zamawiajac|inwestor|inzynier)\w*.{0,60}(nalicz|obciaz|potrac)"
+                                            r"|(w przypadku|o ile|jezeli|gdy|jesli)\W.{0,40}(nalicz|obciaz|potrac)\w*.{0,60}(zamawiajac|inwestor|inzynier)", ctx_w))
             rec = {**k, "lok": ak.lok, "strona": ak.strona, "plik": ak.plik, "opis": opis}
             self.lista_kar.append(rec)
             if k["placi"] != "Wykonawca":
@@ -358,6 +368,16 @@ class Analiza:
                 ocena = min(ocena, "srednie", key=POZIOM.get)
                 uw.append("otwarty katalog obowiązków zagrożonych karą")
                 prop = (prop + " " if prop else "") + "Wskazać zamknięty katalog obowiązków, za które naliczana jest kara, i wymóg wezwania do usunięcia naruszenia z terminem."
+            if k["stawka_proc"] is None and k["kwota"] and k["jednostka"] == "dzień":
+                ocena = min(ocena, "srednie", key=POZIOM.get)
+                uw.append("kara kwotowa za dzień – podaj --wynagrodzenie, żeby ocenić ją procentowo")
+            if k.get("z_kwoty"):
+                uw.append("stawka przeliczona z kwoty na % wynagrodzenia netto")
+            if re.search(r"brutto", k["_b"]) and W:
+                uw.append("podstawa brutto (ekspozycja ≈ 1,23 × wyższa niż od netto)")
+            if k.get("warunkowa"):
+                ocena = {"wysokie": "srednie", "srednie": "info"}.get(ocena, ocena)
+                uw.append("kara warunkowa – naliczana tylko, gdy zamawiający/inwestor obciąży wykonawcę (back-to-back); sprawdź, czy w tej samej wysokości")
             if uw or ocena != "info":
                 self.dodaj("kara", "Kara umowna", ocena, ak, ustalenie=f"{opis}; " + "; ".join(uw),
                            podstawa=("art. 433 pkt 1–2 Pzp; " if self.publiczny else "") + "art. 483–484 KC (miarkowanie kary rażąco wygórowanej)",
@@ -724,13 +744,19 @@ class Analiza:
                            propozycja="Porównać z polisą OC MiD (suma, podlimity, franszyza); OC projektowe zwykle osobno.")
                 break
         kand = self.gdzie(r"okres\w* (rekojmi|gwarancji)\w*.{0,100}(\d{1,3}) ?(lat|miesiec\w*|mies)") or self.gdzie(r"(rekojm|gwarancj)\w*.{0,160}(\d{1,3}) ?(lat|miesiec\w*|mies)")
+        oceniane = []
         for i in kand:
-            if "zabezpieczeni" in self.N[i]:
+            if "zabezpieczeni" in self.N[i] or re.search(r"roszczen|przedluzeni\w*\W+(\(jesli jest\)\s*)?(okresu|czasu)", self.N[i]):
                 continue
             m = re.search(r"(rekojm|gwarancj)\w*.{0,160}?(\d{1,3}) ?(lat|miesiec\w*|mies)", self.N[i])
             if not m:
                 continue
             mies = int(m.group(2)) * (12 if m.group(3) == "lat" else 1)
+            dok = bool(re.search(r"dokumentac|projekt|przedmiot\w* umowy", self.N[i] + " " + self.NR[i]))
+            defin = bool(re.match(r"^\W*(\d+\.\s*)?(okres\w* (rekojmi|gwarancji)|rekojmi\w* za wady)", self.N[i]))
+            oceniane.append((defin, dok, mies, i, m))
+        # najpierw definicja okresu, potem zapisy o dokumentacji, z najdluzszym okresem
+        for defin, dok, mies, i, m in sorted(oceniane, key=lambda x: (not x[0], not x[1], -x[2]))[:1]:
             zwiaz = re.search(r"(od dnia|od daty).{0,80}(odbioru robot|zakonczenia robot|swiadectw\w* przejeci|oddania obiektu|pozwolenia na uzytkowanie)", self.N[i])
             ocena = "srednie" if mies > P["rekojmia_max_mies"] or zwiaz else "info"
             self.dodaj("rekojmia", "Rękojmia / gwarancja za dokumentację", ocena, self.ak[i],

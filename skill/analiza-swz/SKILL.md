@@ -89,7 +89,7 @@ Daty zapisuj jako dd.mm.rrrr, kwoty z „netto/brutto”, odwołania jako `[IDW 
 - Wzory wstawione jako obraz (np. kary FIDIC) nie mają tekstu. Napisz to w sekcji 8.
 - Strony z DOCX pochodzą z konwersji LibreOffice (±1 względem Worda). W PFU numer drukowany bywa przesunięty względem strony pliku. Podaj to w legendzie.
 
-**7. Oddanie.** Jeśli sesja jest połączona z komputerem Marcina, zapisz kartę w teczce przetargu (`_PRZETARGI_/!_SWZ_<rok>/<Zamawiający>/<obiekt>/`) bez nadpisywania. W przeciwnym razie wyślij plik. W odpowiedzi podaj 2–3 zdania: aktualny termin, najważniejsze ryzyko, czego brakuje. Rozbieżności z systemem (np. inny termin niż w `przetargi_active.json`) zgłoś osobno.
+**7. Oddanie.** Jeśli sesja jest połączona z komputerem Marcina, zapisz kartę w teczce przetargu (`_PRZETARGI_/!_SWZ_<rok>/<Zamawiający>/<obiekt>/`) w aktualnym OneDrive (nie w folderze oznaczonym plikiem „nie jest synchronizowany”) bez nadpisywania; nazwy wg standardów biura (skill standardy-mid). W przeciwnym razie wyślij plik. W odpowiedzi podaj 2–3 zdania: aktualny termin, najważniejsze ryzyko, czego brakuje. Rozbieżności z systemem (np. inny termin niż w `przetargi_active.json`) zgłoś osobno.
 
 ## Ściąga Pzp
 
