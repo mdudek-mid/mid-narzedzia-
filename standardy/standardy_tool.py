@@ -47,9 +47,12 @@ def zbuduj(czlony, data=None, wersja=None, ext=None):
     return n
 
 
-def wczytaj(p):
+def wczytaj(p, wymagany=True):
     if not p:
-        sys.exit("Podaj --standardy (prywatny plik konfiguracji biura, np. mid-przetargi/baza_mid/standardy_mid.json).")
+        if not wymagany:
+            return {}
+        sys.exit("Brak pliku konfiguracji biura (--standardy albo MID_STANDARDY). Foldery tematu i skróty instytucji: "
+                 "wewnętrzna Instrukcja 01 biura. Komendy `nazwa`, `na` i `sprawdz` działają bez konfiguracji.")
     return json.loads(Path(p).read_text(encoding="utf-8"))
 
 
@@ -110,7 +113,7 @@ def cmd_folder(a):
 
 
 def cmd_na(a):
-    st = wczytaj(a.standardy)
+    st = wczytaj(a.standardy, wymagany=False)      # bez konfiguracji: bez kontroli typu i branzy
     na = st.get("nadzor_autorski", {})
     typy, branze = na.get("typy", {}), st.get("branze", {})
     if typy and a.typ.upper() not in typy:
