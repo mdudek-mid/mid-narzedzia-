@@ -5,7 +5,9 @@ description: Odczyt rysunków AutoCAD .dwg i .dxf (warstwy, teksty, opisy, wymia
 
 # Czytnik DWG/DXF (LibreDWG + ezdxf)
 
-Środowisko robocze nie ma gotowego czytnika DWG i każda nowa sesja zaczyna od zera. Gotowe programy LibreDWG 0.13.3 leżą w publicznym repozytorium Pracowni MiD `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `libredwg/`. Instalacja z niego trwa kilka sekund i działa w każdej sesji, także u współpracowników bez podłączonego GitHuba. Gdy ta droga zawiedzie, budujemy ze źródeł (ok. 5 minut). Obie drogi sprawdzone 2026-10-09 na rysunkach R14, 2000, 2004, 2007, 2010, 2013 i 2018.
+**Najpierw ustal, gdzie pracujesz.** W sesji w chmurze (Linux) idź drogą 1a/1b. W Claude Code na komputerze z Windows (VS Code albo terminal na komputerze Marcina) idź drogą **1w**, a kroki 1a, 1b i 2 pomiń.
+
+Środowisko robocze w chmurze nie ma gotowego czytnika DWG i każda nowa sesja zaczyna od zera. Gotowe programy LibreDWG 0.13.3 leżą w publicznym repozytorium Pracowni MiD `mdudek-mid/mid-narzedzia-` (nazwa kończy się myślnikiem), w katalogu `libredwg/`. Instalacja z niego trwa kilka sekund i działa w każdej sesji, także u współpracowników bez podłączonego GitHuba. Gdy ta droga zawiedzie, budujemy ze źródeł (ok. 5 minut). Obie drogi sprawdzone 2026-10-09 na rysunkach R14, 2000, 2004, 2007, 2010, 2013 i 2018.
 
 ## Krok 1 – instalacja (raz na sesję)
 
@@ -60,6 +62,31 @@ export PATH=~/.local/libredwg/bin:$PATH && dwg2dxf --version   # oczekiwane: dwg
 
 Nie trać czasu na inne źródła, bo nie działają w tym środowisku: apt (brak pakietu libredwg-tools), pobieranie paczek z github.com/…/releases, ODA File Converter. Działa tylko `git clone`. Build jest statyczny, więc programy zależą wyłącznie od libc.
 
+### 1w. Windows: Claude Code na komputerze (raz na komputer, nie na sesję)
+
+W repozytorium leży oficjalna paczka LibreDWG 0.13.3 dla Windows (`libredwg-0.13.3-win64.zip`, suma SHA256 zgodna z opublikowaną przez projekt LibreDWG) i skrypt `dwg_tool.py`, który na Windows sam szuka programów `.exe`. Instalacja trafia do profilu użytkownika i nie wymaga uprawnień administratora. Sprawdzone 2026-10-21 na rysunkach R2000 i R2018.
+
+Najpierw sprawdź, czy już jest: `Test-Path "$env:USERPROFILE\.local\libredwg\bin\dwg2dxf.exe"`. Jeśli `True`, przejdź do kroku 3.
+
+Instalacja (PowerShell; z Git Bash uruchom to samo przez `powershell -Command`):
+
+```powershell
+$r = Join-Path $env:TEMP ("mid-narzedzia-" + (Get-Random))
+git clone -q --depth 1 https://github.com/mdudek-mid/mid-narzedzia- $r
+$zip = "$r\libredwg\libredwg-0.13.3-win64.zip"
+(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -eq (Get-Content "$zip.sha256").Split(" ")[0]   # musi być True
+$dst = "$env:USERPROFILE\.local\libredwg"
+Expand-Archive $zip -DestinationPath "$dst\bin" -Force
+Copy-Item "$r\libredwg\dwg_tool.py" "$dst\dwg_tool.py" -Force
+python -m pip install --user -q ezdxf matplotlib
+& "$dst\bin\dwg2dxf.exe" --version   # oczekiwane: dwg2dxf 0.13.3
+```
+
+- Gdy suma kontrolna daje `False`, przerwij i powiedz o tym Marcinowi. Nie instaluj.
+- Bez Gita (brak `git`): pobierz repozytorium jako ZIP z `https://github.com/mdudek-mid/mid-narzedzia-/archive/refs/heads/main.zip` (`Invoke-WebRequest`), rozpakuj do `$env:TEMP` i dalej tak samo.
+- `cairosvg` (zapasowy podgląd przez SVG) na Windows wymaga biblioteki Cairo i zwykle nie działa. Używaj `render` z `dwg_tool.py`.
+- Katalogu tymczasowego `$r` nie kasuj samodzielnie, bo Windows czyści `%TEMP%` sam.
+
 ## Krok 2 – skrypt pomocniczy (tylko przy drodze 1b)
 
 Zapisz poniższy skrypt w całości jako `~/.local/libredwg/dwg_tool.py` (narzędziem Write):
@@ -80,9 +107,12 @@ Plik .dwg jest najpierw konwertowany do .dxf (dwg2dxf z LibreDWG) obok, w katalo
 import argparse, csv, os, shutil, subprocess, sys
 from collections import Counter
 
-BIN = os.path.expanduser("~/.local/libredwg/bin")
-DWG2DXF = shutil.which("dwg2dxf") or os.path.join(BIN, "dwg2dxf")
-DWGREAD = shutil.which("dwgread") or os.path.join(BIN, "dwgread")
+# Linux: ~/.local/libredwg/bin/dwg2dxf; Windows: %USERPROFILE%\\.local\\libredwg\\bin\\dwg2dxf.exe
+# (inny katalog: zmienna LIBREDWG_BIN)
+EXE = ".exe" if os.name == "nt" else ""
+BIN = os.environ.get("LIBREDWG_BIN") or os.path.expanduser(os.path.join("~", ".local", "libredwg", "bin"))
+DWG2DXF = shutil.which("dwg2dxf") or os.path.join(BIN, "dwg2dxf" + EXE)
+DWGREAD = shutil.which("dwgread") or os.path.join(BIN, "dwgread" + EXE)
 
 
 def u(s):
@@ -96,7 +126,7 @@ def to_dxf(path, workdir=None):
     if path.lower().endswith(".dxf"):
         return path
     if not os.path.exists(DWG2DXF):
-        sys.exit("Brak dwg2dxf - najpierw zbuduj LibreDWG (krok 1 skilla dwg).")
+        sys.exit("Brak dwg2dxf - najpierw zainstaluj LibreDWG (krok 1 skilla dwg; na Windows krok 1w).")
     workdir = workdir or os.path.join(os.getcwd(), "dwg_work")
     os.makedirs(workdir, exist_ok=True)
     out = os.path.join(workdir, os.path.splitext(os.path.basename(path))[0] + ".dxf")
@@ -352,7 +382,8 @@ if __name__ == "__main__":
 ## Krok 3 – skąd wziąć rysunek
 
 - Załącznik w rozmowie: czytaj po nazwie pliku.
-- Plik na komputerze użytkownika (folder projektu, ekspertyzy, archiwum): skopiuj go do środowiska roboczego narzędziem do pobierania plików z komputera i pracuj na kopii. Na komputerze użytkownika (Windows) niczego nie buduj ani nie instaluj.
+- Plik na komputerze użytkownika, **sesja w chmurze**: skopiuj go do środowiska roboczego narzędziem do pobierania plików z komputera i pracuj na kopii. W takiej sesji na komputerze użytkownika niczego nie buduj ani nie instaluj.
+- Plik na komputerze, **Claude Code na Windows** (droga 1w): czytaj go wprost z dysku (`Z:\...`, OneDrive). Polecenia uruchamiaj z katalogu roboczego poza folderami projektów, np. `$env:USERPROFILE\dwg_robocze`, bo skrypt zakłada `dwg_work\` w bieżącym katalogu. Pośrednie DXF nie mogą trafić na serwer ani do folderu tematu.
 - Oryginałów nie zmieniaj. Pośrednie pliki DXF trafiają do `./dwg_work/`.
 
 ## Krok 4 – czytanie
@@ -367,6 +398,15 @@ python3 $T render rysunek.dwg -o model.png --dpi 120               # przegląd m
 python3 $T render rysunek.dwg --layout "A1-01" -o arkusz.png       # arkusz papieru
 python3 $T render rysunek.dwg --window=1200,300,1800,700 -o detal.png   # powiększenie
 python3 $T render rysunek.dwg --layers=KONSTRUKCJA,WYMIARY --mono -o konstr.png
+```
+
+Na Windows (droga 1w), w PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\dwg_robocze" | Out-Null; Set-Location "$env:USERPROFILE\dwg_robocze"
+$T = "$env:USERPROFILE\.local\libredwg\dwg_tool.py"
+python $T info "Z:\372_PRIMOST_Podwale-Przedmiejskie\...\rysunek.dwg"
+python $T render "Z:\...\rysunek.dwg" -o model.png --dpi 120
 ```
 
 Wygenerowany PNG obejrzyj narzędziem Read.

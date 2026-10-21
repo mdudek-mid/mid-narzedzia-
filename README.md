@@ -21,6 +21,27 @@ mkdir -p ~/.local/libredwg && tar -xJf libredwg-0.13.3-linux-x86_64.tar.xz -C ~/
 ```
 
 Źródła: https://github.com/LibreDWG/libredwg (tag 0.13.3). Licencja LibreDWG: GPLv3.
+
+### Windows (Claude Code w VS Code na komputerze)
+
+- `libredwg/libredwg-0.13.3-win64.zip` – oficjalna paczka LibreDWG 0.13.3 dla Windows z wydania projektu (https://github.com/LibreDWG/libredwg/releases/tag/0.13.3), bez zmian; suma SHA256 w `.sha256` jest zgodna z sumą opublikowaną w opisie wydania.
+- `libredwg/dwg_tool.py` – skrypt pomocniczy w wersji działającej na Linuksie i Windows (szuka `dwg2dxf.exe`; inny katalog programów: zmienna `LIBREDWG_BIN`).
+
+Instalacja do profilu użytkownika, bez uprawnień administratora (PowerShell):
+
+```powershell
+$r = Join-Path $env:TEMP ("mid-narzedzia-" + (Get-Random))
+git clone -q --depth 1 https://github.com/mdudek-mid/mid-narzedzia- $r
+$zip = "$r\libredwg\libredwg-0.13.3-win64.zip"
+(Get-FileHash $zip -Algorithm SHA256).Hash.ToLower() -eq (Get-Content "$zip.sha256").Split(" ")[0]   # musi być True
+$dst = "$env:USERPROFILE\.local\libredwg"
+Expand-Archive $zip -DestinationPath "$dst\bin" -Force
+Copy-Item "$r\libredwg\dwg_tool.py" "$dst\dwg_tool.py" -Force
+python -m pip install --user -q ezdxf matplotlib
+& "$dst\bin\dwg2dxf.exe" --version
+```
+
+Sprawdzone 2026-10-21: `dwg2dxf.exe` 0.13.3 (uruchomiony pod Wine) konwertuje rysunki testowe LibreDWG R2000 i R2018, a `dwg_tool.py` czyta powstałe DXF (info, texts, render).
 Zbudowano 2026-10-09, gcc 13.3, Ubuntu 24.04:
 `cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DENABLE_LTO=OFF -DDISABLE_WERROR=ON`
 
