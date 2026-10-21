@@ -26,7 +26,7 @@ pip install -q --break-system-packages ezdxf matplotlib cairosvg
 export PATH=~/.local/libredwg/bin:$PATH && dwg2dxf --version   # oczekiwane: dwg2dxf 0.13.3
 ```
 
-Paczka zawiera `dwg2dxf`, `dwgread`, `dwg2SVG` oraz skrypt `~/.local/libredwg/dwg_tool.py`, identyczny z tym z kroku 2. Po udanej instalacji krok 2 pomiń.
+Paczka zawiera `dwg2dxf`, `dwgread`, `dwg2SVG` oraz skrypt `~/.local/libredwg/dwg_tool.py` (na Linuksie działa tak samo jak ten z kroku 2; wersja z kroku 2 i `libredwg/dwg_tool.py` w repo dodatkowo obsługuje Windows). Po udanej instalacji krok 2 pomiń.
 
 Jeśli `git clone` zwróci błąd dostępu, a w sesji jest narzędzie `add_repo`, dołącz nim repo (owner `mdudek-mid`, repo `mid-narzedzia-`, access `read`) i spróbuj raz jeszcze. Gdy repo nie istnieje pod tą nazwą, mogło zostać przemianowane: poszukaj go narzędziem `list_repos` z zapytaniem `narzedzia`.
 
