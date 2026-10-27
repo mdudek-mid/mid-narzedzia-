@@ -159,3 +159,25 @@ Korzysta z niego skill „protokoly” (`skill/protokoly/SKILL.md`).
 ## Standardy biura (standardy_tool.py)
 
 Skrypt `standardy/standardy_tool.py` podpowiada nazwy plików i folderów zgodne ze standardem biura (prefiks daty, bez polskich znaków, spacji, `#` i `!`), nazwy folderów wystąpień w nadzorze autorskim, skróty instytucji i folder docelowy dla rodzaju dokumentu, a `sprawdz` raportuje niezgodne nazwy, puste foldery i za długie ścieżki (niczego nie zmienia). Reguły biura czyta z prywatnego pliku konfiguracji (`--standardy` albo `MID_STANDARDY`); sam skrypt nie zawiera treści instrukcji wewnętrznych.
+
+## Przedmiary robót (przedmiar_tool.py)
+
+Skrypt `przedmiar/przedmiar_tool.py` liczy ilości do przedmiarów wprost z rysunków i kontroluje przedmiary w XLSX. Każda liczba ma ślad: plik, warstwa albo kolor, uchwyty obiektów. Komendy:
+- `obmiar` – DWG/DXF: pola kreskowań (netto, z wyspami), zamkniętych polilinii i okręgów, długości, liczby obiektów i bloków, kilometraż na osi; sumy wg warstw albo wg mapy warstw (CSV: warstwa → pozycja przedmiaru);
+- `pdf-pola` – PDF bez DWG: pola szraf wg koloru wypełnienia, opisy kolorów z legendy rysunku, pomija powtarzalne znaczniki (linie podziału arkuszy) i logo, usuwa duplikaty między arkuszami (te same szrafy na dwóch arkuszach → transformacja sztywna i scalenie);
+- `pdf-materialy` – tabele „Zastosowane materiały” z rysunków zbrojenia (beton, stal), także na stronach obróconych; gdy teksty są w SHX, zapisuje podgląd PNG do odczytu wzrokowego;
+- `stal` – przeliczenie zestawienia stali (poz; szt; Ø; długość) wg mas kg/m;
+- `skaner` – kontrola formuł przedmiaru z kolumnami obiektów: K5 (formuła obiektu bierze parametr z kolumny innego obiektu) i K6 (wiersz liczony inaczej niż większość obiektów);
+- `weryfikacja` – skoroszyt weryfikacji przedmiaru zamawiającego z wyników branż (JSON): statusy (zgodna ≤ 1 %, szt. bez tolerancji), formuły różnic i „ilości do wyceny”, PODSUMOWANIE, KONTROLE, ŹRÓDŁA; bez cen (`wzor-weryfikacji` tworzy przykładowe pliki);
+- `test` – testy na danych syntetycznych.
+
+`przedmiar/MID_OBMIAR.lsp` – polecenie AutoCAD-a `MID_OBMIAR` (tylko odczyt rysunku): eksport obiektów modelu z długością i polem, także REGION i obiektów Civil 3D, do `RRRRMMDD_GGMMSS_<rysunek>_obmiar.csv`; wynik czyta `obmiar --lisp`.
+
+```bash
+pip install -q --break-system-packages ezdxf shapely openpyxl pymupdf numpy
+rm -rf /tmp/mid-narzedzia && git clone -q --depth 1 https://github.com/mdudek-mid/mid-narzedzia- /tmp/mid-narzedzia
+mkdir -p ~/.local/przedmiar && cp /tmp/mid-narzedzia/przedmiar/* ~/.local/przedmiar/
+python3 -I ~/.local/przedmiar/przedmiar_tool.py test
+python3 -I ~/.local/przedmiar/przedmiar_tool.py pdf-pola 1000 plan_1.pdf plan_2.pdf --legenda legenda.pdf
+```
+DWG wymaga LibreDWG (sekcja „Czytnik DWG”). Sprawdzone 2026-10-27 na planach drogowych 1:1000 eksportowanych z Civil 3D: pola z PDF różniły się od wykazów projektanta o −5…+3 % (nawierzchnia bitumiczna +2,9 %, ścieżka rowerowa −2,6 %, ścieżka pieszo-rowerowa +0,9 %, chodnik −4,9 %). Skarpy na planie to rzut – pole na skarpie = rzut × √(1 + 1/n²) dla pochylenia 1:n.
